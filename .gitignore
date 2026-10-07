@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test / coverage
+.coverage
+htmlcov/
+
+# Local database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+
+# Generated files
+generated/
+tmp/
