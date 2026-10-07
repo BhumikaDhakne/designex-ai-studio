@@ -1,0 +1,75 @@
+{
+  "project_id": "PRJ-001",
+  "project_name": "Palm Jumeirah Luxury Villa",
+  "project_type": "Luxury Residential Villa",
+  "location": "Palm Jumeirah, Dubai",
+  "status": "In Progress",
+  "project_manager": "Ahmed Hassan",
+  "tasks": [
+    {
+      "task_id": "T-001",
+      "title": "Finalize marble specification",
+      "owner": "Design Team",
+      "status": "Completed",
+      "deadline": "2026-10-03"
+    },
+    {
+      "task_id": "T-002",
+      "title": "Update BOQ for marble works",
+      "owner": "QS Team",
+      "status": "In Progress",
+      "deadline": "2026-10-08"
+    },
+    {
+      "task_id": "T-003",
+      "title": "Obtain supplier quotation for marble",
+      "owner": "Procurement Team",
+      "status": "In Progress",
+      "deadline": "2026-10-10"
+    },
+    {
+      "task_id": "T-004",
+      "title": "Marble material delivery",
+      "owner": "Procurement Team",
+      "status": "Not Started",
+      "deadline": "2026-10-20"
+    },
+    {
+      "task_id": "T-005",
+      "title": "Marble installation",
+      "owner": "Site Team",
+      "status": "Not Started",
+      "deadline": "2026-10-25"
+    }
+  ],
+  "task_dependencies": [
+    {
+      "task_id": "T-003",
+      "depends_on_task_id": "T-002"
+    },
+    {
+      "task_id": "T-004",
+      "depends_on_task_id": "T-003"
+    },
+    {
+      "task_id": "T-005",
+      "depends_on_task_id": "T-004"
+    }
+  ],
+  "documents": [
+    {
+      "document_id": "DOC-001",
+      "document_type": "meeting_minutes",
+      "title": "Client Coordination Meeting",
+      "doc_date": "2026-10-06",
+      "content": "The client requested a change to the marble finish from the previously discussed Carrara white finish to a warmer beige natural stone finish. Design team to confirm the revised specification."
+    },
+    {
+      "document_id": "DOC-002",
+      "document_type": "procurement_update",
+      "title": "Marble Procurement Update",
+      "doc_date": "2026-10-06",
+      "content": "Procurement is progressing with supplier quotation based on the previously discussed Carrara white marble specification. Supplier quotation is expected by 10 October."
+    }
+  ]
+}
