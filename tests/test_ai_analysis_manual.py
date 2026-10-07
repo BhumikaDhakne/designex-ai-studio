@@ -2,46 +2,68 @@ from backend.app.services.ai_service import AIService
 from backend.app.services.project_service import ProjectService
 
 
-project_service = ProjectService()
-ai_service = AIService()
+def main():
+    project_service = ProjectService()
+    ai_service = AIService()
 
-project = project_service.load_project("PRJ-001")
+    project = project_service.load_project("PRJ-001")
 
-analysis = ai_service.analyze_project(project)
+    analysis = ai_service.analyze_project(project)
 
-print("\n==============================")
-print("PROJECT INTELLIGENCE ANALYSIS")
-print("==============================")
+    print("\n==============================")
+    print("PROJECT INTELLIGENCE ANALYSIS")
+    print("==============================")
 
-print(f"\nProject: {analysis.project_name}")
-print(f"Overall Risk: {analysis.overall_risk}")
+    print(f"\nProject: {analysis.project_name}")
+    print(f"Overall Risk: {analysis.overall_risk}")
+    print(f"Number of Risks: {len(analysis.risks)}")
 
-print(f"\nNumber of Risks: {len(analysis.risks)}")
+    for index, risk in enumerate(analysis.risks, start=1):
+        print(f"\n--- Risk {index} ---")
 
-for index, risk in enumerate(analysis.risks, start=1):
-    print(f"\n--- Risk {index} ---")
-    print(f"Title: {risk.title}")
-    print(f"Severity: {risk.severity}")
-    print(f"Cause: {risk.cause}")
+        print(f"Title: {risk.title}")
+        print(f"Severity: {risk.severity}")
 
-    print("\nEvidence:")
+        print("\nCause:")
+        print(risk.cause)
 
-    for evidence in risk.evidence:
-        print(f"  Document: {evidence.document_title}")
-        print(f"  Quote: {evidence.quote}")
-        print(f"  Verified: {evidence.verified}")
+        print("\nEvidence:")
 
-    print("\nAffected Tasks:")
+        for evidence in risk.evidence:
+            print(f"  Document: {evidence.document_title}")
+            print(f"  Document ID: {evidence.document_id}")
+            print(f"  Quote: {evidence.quote}")
+            print(f"  Verified: {evidence.verified}")
 
-    for task in risk.affected_tasks:
-        print(f"  - {task}")
+        print("\nRoot Cause Tasks:")
 
-    print("\nDownstream Impact:")
+        for task in risk.root_cause_tasks:
+            print(f"  - {task}")
 
-    for impact in risk.downstream_impact:
-        print(f"  - {impact}")
+        print("\nCurrently Affected Tasks:")
 
-    print("\nRecommended Actions:")
+        for task in risk.affected_tasks:
+            print(f"  - {task}")
 
-    for action in risk.recommended_actions:
-        print(f"  - {action}")
+        print("\nDownstream Tasks:")
+
+        for task in risk.downstream_tasks:
+            print(f"  - {task}")
+
+        print("\nDownstream Impact:")
+
+        for impact in risk.downstream_impact:
+            print(f"  - {impact}")
+
+        print("\nRecommended Actions:")
+
+        for action in risk.recommended_actions:
+            print(f"  - {action}")
+
+    print("\n==============================")
+    print("ANALYSIS COMPLETE")
+    print("==============================")
+
+
+if __name__ == "__main__":
+    main()

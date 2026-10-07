@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 RiskSeverity = Literal["LOW", "MEDIUM", "HIGH", "CRITICAL"]
@@ -18,7 +18,11 @@ class RiskAnalysis(BaseModel):
     severity: RiskSeverity
     cause: str
     evidence: list[Evidence]
+
+    root_cause_tasks: list[str]
     affected_tasks: list[str]
+    downstream_tasks: list[str]
+
     downstream_impact: list[str]
     recommended_actions: list[str]
 

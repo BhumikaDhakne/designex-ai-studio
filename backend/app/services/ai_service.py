@@ -3,6 +3,7 @@ from openai import OpenAI
 from backend.app.core.config import OPENAI_API_KEY
 from backend.app.schemas.project import Project
 from backend.app.schemas.risk import ProjectAnalysisResponse
+from backend.app.services.dependency_service import DependencyService
 
 
 class AIService:
@@ -19,7 +20,10 @@ class AIService:
 
         return response.output_text
 
-    def analyze_project(self, project: Project) -> ProjectAnalysisResponse:
+    def analyze_project(
+        self,
+        project: Project,
+    ) -> ProjectAnalysisResponse:
         """
         Analyze structured project data and unstructured project documents
         to identify supported project risks and downstream impact.
@@ -52,8 +56,23 @@ IMPORTANT RULES:
 - Do not invent facts.
 - Do not assume a task is at risk only because it is incomplete.
 - Look for contradictions, changes, dependencies, outdated information,
-  missing follow-up, or information that could affect downstream work.
-- Connect document evidence to affected tasks and their dependencies.
+  missing follow-up, or information that may affect downstream work.
+- Connect document evidence to the project's task dependencies.
+
+Classify tasks into:
+
+1. root_cause_tasks:
+   Tasks directly associated with the origin of the issue.
+
+2. affected_tasks:
+   Tasks currently requiring action, validation, correction,
+   or review because of the identified issue.
+
+Do NOT determine downstream_tasks yourself.
+The application will calculate downstream tasks deterministically
+from the project's dependency graph.
+
+- Do not put every related task into affected_tasks.
 - Explain the cause of each risk.
 - Explain the downstream impact.
 - Recommend practical recovery actions.
@@ -81,18 +100,69 @@ IMPORTANT RULES:
         )
 
         if response.output_parsed is None:
-            raise RuntimeError("AI returned no structured project analysis.")
+            raise RuntimeError(
+                "AI returned no structured project analysis."
+            )
 
         analysis = response.output_parsed
 
-        # Verify every AI-provided evidence quote independently.
+        dependency_service = DependencyService(project)
+
+        for risk in analysis.risks:
+            normalized_root_tasks: list[str] = []
+            normalized_affected_tasks: list[str] = []
+
+            # Resolve root-cause task references.
+            for task_reference in risk.root_cause_tasks:
+                task_id = dependency_service.normalize_task_id(
+                    task_reference
+                )
+
+                if task_id and task_id not in normalized_root_tasks:
+                    normalized_root_tasks.append(task_id)
+
+            # Resolve affected task references.
+            for task_reference in risk.affected_tasks:
+                task_id = dependency_service.normalize_task_id(
+                    task_reference
+                )
+
+                if task_id and task_id not in normalized_affected_tasks:
+                    normalized_affected_tasks.append(task_id)
+
+            risk.root_cause_tasks = normalized_root_tasks
+            risk.affected_tasks = [
+                task_id
+                for task_id in normalized_affected_tasks
+                if task_id not in set(normalized_root_tasks)
+            ]
+
+            # Calculate downstream tasks from the affected tasks.
+            downstream_candidates: set[str] = set()
+
+            for task_id in risk.affected_tasks:
+                downstream_candidates.update(
+                    dependency_service.get_all_downstream_tasks(
+                        task_id
+                    )
+                )
+
+            risk.downstream_tasks = [
+                task_id
+                for task_id in downstream_candidates
+                if task_id not in set(risk.root_cause_tasks)
+                and task_id not in set(risk.affected_tasks)
+            ]
+
+        # Independently verify every AI-provided evidence quote.
         for risk in analysis.risks:
             for evidence in risk.evidence:
                 source_document = next(
                     (
                         document
                         for document in project.documents
-                        if document.document_id == evidence.document_id
+                        if document.document_id
+                        == evidence.document_id
                     ),
                     None,
                 )
@@ -101,6 +171,8 @@ IMPORTANT RULES:
                     evidence.verified = False
                     continue
 
-                evidence.verified = evidence.quote in source_document.content
+                evidence.verified = (
+                    evidence.quote in source_document.content
+                )
 
         return analysis

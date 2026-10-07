@@ -8,19 +8,24 @@ class ProjectService:
     """Handles loading and validating project information."""
 
     def load_project(self, project_id: str) -> Project:
-        fixture_path = (
+        projects_path = (
             Path(__file__).resolve().parents[3]
             / "data"
             / "projects"
-            / "villa_marble_change.json"
         )
 
-        with fixture_path.open("r", encoding="utf-8") as file:
-            data = json.load(file)
+        project_files = projects_path.glob("*.json")
 
-        project = Project.model_validate(data)
+        for project_file in project_files:
+            with project_file.open(
+                "r",
+                encoding="utf-8",
+            ) as file:
+                data = json.load(file)
 
-        if project.project_id != project_id:
-            raise ValueError(f"Project not found: {project_id}")
+            if data.get("project_id") != project_id:
+                continue
 
-        return project
+            return Project.model_validate(data)
+
+        raise ValueError(f"Project not found: {project_id}")

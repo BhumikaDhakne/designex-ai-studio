@@ -22,22 +22,30 @@ def test_risk_analysis_schema():
                         quote="The client requested a change to the marble finish.",
                     )
                 ],
-                affected_tasks=["T-002", "T-003", "T-004", "T-005"],
+                root_cause_tasks=["T-001"],
+                affected_tasks=["T-002", "T-003"],
+                downstream_tasks=["T-004", "T-005"],
                 downstream_impact=[
                     "BOQ may require revision",
                     "Supplier quotation may need revision",
-                    "Material delivery could be delayed"
+                    "Material delivery could be delayed",
                 ],
                 recommended_actions=[
                     "Confirm revised specification",
                     "Update BOQ",
-                    "Request revised supplier quotation"
+                    "Request revised supplier quotation",
                 ],
             )
         ],
     )
 
+    risk = response.risks[0]
+
     assert response.project_id == "PRJ-001"
     assert response.overall_risk == "HIGH"
-    assert len(response.risks) == 1
-    assert response.risks[0].evidence[0].verified is False
+
+    assert risk.root_cause_tasks == ["T-001"]
+    assert risk.affected_tasks == ["T-002", "T-003"]
+    assert risk.downstream_tasks == ["T-004", "T-005"]
+
+    assert risk.evidence[0].verified is False
