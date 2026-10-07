@@ -1,0 +1,75 @@
+{
+  "project_id": "PRJ-003",
+  "project_name": "Dubai Hills Contemporary Residence",
+  "project_type": "Luxury Residential Villa",
+  "location": "Dubai Hills Estate, Dubai",
+  "status": "In Progress",
+  "project_manager": "Omar Khalid",
+  "tasks": [
+    {
+      "task_id": "T-201",
+      "title": "Finalize stone specification",
+      "owner": "Design Team",
+      "status": "Completed",
+      "deadline": "2026-10-05"
+    },
+    {
+      "task_id": "T-202",
+      "title": "Approve supplier quotation",
+      "owner": "Procurement Team",
+      "status": "Completed",
+      "deadline": "2026-10-08"
+    },
+    {
+      "task_id": "T-203",
+      "title": "Stone material delivery",
+      "owner": "Procurement Team",
+      "status": "In Progress",
+      "deadline": "2026-10-18"
+    },
+    {
+      "task_id": "T-204",
+      "title": "Stone installation",
+      "owner": "Site Team",
+      "status": "Not Started",
+      "deadline": "2026-10-20"
+    },
+    {
+      "task_id": "T-205",
+      "title": "Final stone inspection",
+      "owner": "QA Team",
+      "status": "Not Started",
+      "deadline": "2026-10-24"
+    }
+  ],
+  "task_dependencies": [
+    {
+      "task_id": "T-203",
+      "depends_on_task_id": "T-202"
+    },
+    {
+      "task_id": "T-204",
+      "depends_on_task_id": "T-203"
+    },
+    {
+      "task_id": "T-205",
+      "depends_on_task_id": "T-204"
+    }
+  ],
+  "documents": [
+    {
+      "document_id": "DOC-201",
+      "document_type": "procurement_update",
+      "title": "Supplier Delivery Update",
+      "doc_date": "2026-10-07",
+      "content": "Supplier has confirmed that the stone material delivery originally planned for 15 October has been pushed to 25 October due to a production delay."
+    },
+    {
+      "document_id": "DOC-202",
+      "document_type": "site_coordination",
+      "title": "Site Coordination Meeting",
+      "doc_date": "2026-10-07",
+      "content": "Site team confirmed that stone installation is scheduled to begin on 20 October and requires the material to be available before installation can commence."
+    }
+  ]
+}
